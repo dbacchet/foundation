@@ -1,0 +1,16 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+# include dirs
+env_local.AppendUnique(CPPPATH = ['../..'
+                                 ] )
+# lib path
+env_local.AppendUnique(LIBPATH = ['../../tracing'
+                                 ])
+libs = []
+libs.append('tracing')
+
+# build library
+tracing_test    = env_local.Program('tracing_test',   Glob('tracing_test.cpp'),   LIBS=libs)
+tracing_test_mt = env_local.Program('tracing_test_mt',Glob('tracing_test_mt.cpp'),LIBS=libs)

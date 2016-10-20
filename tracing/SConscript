@@ -1,0 +1,15 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+# include dirs
+env_local.AppendUnique(CPPPATH = ['.'] )
+# preprocessor definitions
+env_local.AppendUnique(CPPDEFINES = [])
+
+# get list of files
+files = Glob('*.c*')
+    
+# build library
+tracing_lib = env_local.StaticLibrary('tracing',files)
+Return('tracing_lib')
