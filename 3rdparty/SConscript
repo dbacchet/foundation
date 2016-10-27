@@ -1,0 +1,5 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+SConscript( 'googletest/SConscript',   exports={'env':env_local}  )

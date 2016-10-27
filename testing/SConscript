@@ -1,0 +1,17 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+# include dirs
+env_local.AppendUnique(CPPPATH = ['#/3rdparty/googletest/include'
+                                 ] )
+# lib path
+env_local.AppendUnique(LIBPATH = ['../3rdparty/googletest'
+                                 ])
+files = Glob('*.cpp')
+
+libs = []
+libs.append('gtest')
+
+# build library
+unit_test = env_local.Program('unit_test', files, LIBS=libs)
