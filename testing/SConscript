@@ -3,7 +3,8 @@ Import('env')
 env_local = env.Clone()
 
 # include dirs
-env_local.AppendUnique(CPPPATH = ['#/3rdparty/googletest/include'
+env_local.AppendUnique(CPPPATH = ['#',
+                                  '#/3rdparty/googletest/include'
                                  ] )
 # lib path
 env_local.AppendUnique(LIBPATH = ['../3rdparty/googletest'
@@ -14,4 +15,4 @@ libs = []
 libs.append('gtest')
 
 # build library
-unit_test = env_local.Program('unit_test', files, LIBS=libs)
+unit_tests = env_local.Program('unit_tests', files, LIBS=libs)
