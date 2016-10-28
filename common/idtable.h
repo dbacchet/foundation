@@ -99,5 +99,5 @@ T& IDTable<T>::get(ID id) {
 
 template <typename T>
 bool IDTable<T>::has(ID id) const {
-    return _ids[id.index].internal_id == id.internal_id;
+    return id.index<_ids.size() && _ids[id.index].internal_id == id.internal_id;
 }

@@ -29,7 +29,7 @@ builddir = os.path.join('build', sys.platform)
 env['builddir'] = builddir
 # compile flags
 env.AppendUnique( CCFLAGS = ['-g',
-                             # '-O2',
+                             '-O2',
                              '-std=c++11',
                              '-Werror'])
 

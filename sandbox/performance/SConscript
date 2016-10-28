@@ -1,0 +1,15 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+# include dirs
+env_local.AppendUnique(CPPPATH = ['../..'
+                                 ] )
+# lib path
+env_local.AppendUnique(LIBPATH = ['../../tracing'
+                                 ])
+libs = []
+libs.append('tracing')
+
+# build library
+idtable_performance_test = env_local.Program('idtable_performance_test', Glob('idtable_performance_test.cpp'), LIBS=libs)

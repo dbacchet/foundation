@@ -3,4 +3,5 @@ Import('env')
 env_local = env.Clone()
 
 # build tracing
-SConscript( 'tracing/SConscript',    exports={'env':env_local}  )
+SConscript( 'tracing/SConscript',     exports={'env':env_local}  )
+SConscript( 'performance/SConscript', exports={'env':env_local}  )
