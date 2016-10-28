@@ -35,11 +35,12 @@ struct IDTable {
     /// \details the size of the internal ids_ and objects_ arrays can be bigger than this.
     uint32_t size() const {  return _size;  }
 
-    std::vector<ID> _ids;
-    std::vector<T>  _objects;
-    uint32_t        _size;         ///< number of objects stored
-    uint32_t        _freelist_idx; ///< index of the first free slot in the _ids array
-    uint32_t        _next_uuid;    ///< \todo replace with a per-slot index
+    std::vector<ID>       _ids;               ///< id map used for storing uuid and as a lookup ID -> obj
+    std::vector<uint32_t> _obj_to_idx_lookup; ///< used to map back _objects slots to _ids
+    std::vector<T>        _objects;           ///< contiguous array of objects
+    uint32_t              _size;              ///< number of objects stored
+    uint32_t              _freelist_idx;      ///< index of the first free slot in the _ids array
+    uint32_t              _next_uuid;         ///< \todo replace with a per-slot index
 };
 
 
@@ -47,7 +48,6 @@ struct IDTable {
 template <typename T>
 IDTable<T>::IDTable()
 : _freelist_idx(UINT32_MAX), _size(0), _next_uuid(0) {
-    // printf("size of ID struct: %lu\n", sizeof(ID));
 }
 
 /// \todo investigate if it's possible to remove the linear search for updating the index in the _ids array
@@ -57,12 +57,7 @@ bool IDTable<T>::remove(ID id) {
         // swap with last;
         auto internal_idx = _ids[id.index].index;
         _objects[internal_idx] = _objects[--_size];
-        for (auto& ref: _ids) {
-            if (ref.index==_size) {
-                ref.index = internal_idx;
-                break;
-            }
-        }
+        _ids[_obj_to_idx_lookup[_size]].index = internal_idx;
         // update free list chain
         _ids[id.index].index = UINT32_MAX;
         _ids[id.index].next_free_idx = _freelist_idx;
@@ -75,8 +70,10 @@ bool IDTable<T>::remove(ID id) {
 template <typename T>
 ID IDTable<T>::add(const T &obj) {
     // add the new object in the first free pos of the objects_ array
-    if (_size>=_objects.size())
+    if (_size>=_objects.size()) {
         _objects.resize(_size+1);
+        _obj_to_idx_lookup.resize(_size+1);
+    }
     _objects[_size] = obj;
     // create an entry in the _ids array
     ID id {_size,_next_uuid++};
@@ -88,6 +85,7 @@ ID IDTable<T>::add(const T &obj) {
         _ids[_freelist_idx] = id;
         id.index = _freelist_idx;
     }
+    _obj_to_idx_lookup[_size] = id.index; // keep the lookup array in sync
     ++_size;
     return id;
 }

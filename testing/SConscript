@@ -4,15 +4,17 @@ env_local = env.Clone()
 
 # include dirs
 env_local.AppendUnique(CPPPATH = ['#',
-                                  '#/3rdparty/googletest/include'
+                                  '#/3rdparty/googletest/include',
                                  ] )
 # lib path
-env_local.AppendUnique(LIBPATH = ['../3rdparty/googletest'
+env_local.AppendUnique(LIBPATH = ['../3rdparty/googletest',
+                                  '../tracing',
                                  ])
 files = Glob('*.cpp')
 
 libs = []
 libs.append('gtest')
+libs.append('tracing')
 
 # build library
 unit_tests = env_local.Program('unit_tests', files, LIBS=libs)

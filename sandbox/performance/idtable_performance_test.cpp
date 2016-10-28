@@ -21,7 +21,14 @@ struct TestData {
 
 typedef int64_t MapID;
 
-void performance_std_map(unsigned int N) {
+struct PerfResults {
+    int64_t creation;
+    int64_t replace;
+    int64_t access_by_id;
+    int64_t access_by_iter;
+};
+
+PerfResults performance_std_map(unsigned int N) {
     int64_t uuid = 0;
     std::vector<MapID> ids;
     std::map<MapID,TestData> mymap;
@@ -69,6 +76,12 @@ void performance_std_map(unsigned int N) {
     }
     auto tp_increase_iter_end = std::chrono::high_resolution_clock::now();
     // summary
+    return PerfResults {
+              .creation = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_creation_end-tp_creation_start).count(),
+              .replace  = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_replace_end-tp_replace_start).count(),
+              .access_by_id = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_id_end-tp_increase_id_start).count(),
+              .access_by_iter = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_iter_end-tp_increase_iter_start).count()
+    };
     std::cout << "std::map time stats:\n"
               << " creation: "         << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_creation_end-tp_creation_start).count() << std::endl
               << " replace: "          << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_replace_end-tp_replace_start).count() << std::endl
@@ -76,7 +89,7 @@ void performance_std_map(unsigned int N) {
               << " increase by iter: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_iter_end-tp_increase_iter_start).count() << std::endl;
 }
 
-void performance_idtable(unsigned int N) {
+PerfResults performance_idtable(unsigned int N) {
     std::vector<ID> ids;
     IDTable<TestData> mytable;
     srand(0);
@@ -122,73 +135,25 @@ void performance_idtable(unsigned int N) {
     }
     auto tp_increase_iter_end = std::chrono::high_resolution_clock::now();
     // summary
-    std::cout << "IDTable time stats:\n"
-              << " creation: "         << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_creation_end-tp_creation_start).count() << std::endl
-              << " replace: "          << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_replace_end-tp_replace_start).count() << std::endl
-              << " increase by id: "   << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_id_end-tp_increase_id_start).count() << std::endl
-              << " increase by iter: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_iter_end-tp_increase_iter_start).count() << std::endl;
+    return PerfResults {
+              .creation = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_creation_end-tp_creation_start).count(),
+              .replace  = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_replace_end-tp_replace_start).count(),
+              .access_by_id = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_id_end-tp_increase_id_start).count(),
+              .access_by_iter = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_iter_end-tp_increase_iter_start).count()
+    };
 }
 
-void performance_idtable2(unsigned int N) {
-    // int64_t uuid = 0;
-    std::vector<ID> ids;
-    IDTable<TestData> mytable;
-    srand(0);
-    auto tp_start = std::chrono::high_resolution_clock::now();
-    // creation
-    for (uint32_t i=0; i<N; i++) {
-        auto id = mytable.add(TestData { .counter=i, .value=0.0, .timestamp=10010101 });
-        ids.push_back(id);
-    }
-    auto tp_creation = std::chrono::high_resolution_clock::now();
-    // replace N/2 elements by removing and adding batches
-    const int num_batches = 1;
-    for (auto k=0; k<num_batches; k++) {
-        auto n_elem = N/2/num_batches;
-        std::vector<int> candidates(n_elem);
-        // remove
-        for (auto&& c: candidates) {
-            c = rand() % N;
-            mytable.remove(ids[c]);
-            // ids.erase(ids[c])
-        }
-        // add
-        for (auto c: candidates) {
-            std::cout << c << " ";
-            ids[c] = mytable.add(TestData { .counter=100, .value=1.0, .timestamp=20020202 });
-            std::cout << ids[c].index << " " << ids[c].internal_id << std::endl;
-        }
-    }
-    auto tp_replace = std::chrono::high_resolution_clock::now();
-    // increase counter accessing by id
-    for (auto id: ids) {
-        if (mytable.has(id))
-            mytable.get(id).counter += 1;
-        else
-            std::cout << "not found: " << id.index << " " << id.internal_id << std::endl;
-    }
-    auto tp_increase_id = std::chrono::high_resolution_clock::now();
-    // increase counter accessing by iterator
-    for (auto&& it:mytable._objects) {
-        it.counter +=1;
-    }
-    auto tp_increase_iter = std::chrono::high_resolution_clock::now();
-    // summary
-    std::cout << "IDTable time stats:\n"
-              << " creation: "         << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_creation-tp_start).count() << std::endl
-              << " replace: "          << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_replace-tp_creation).count() << std::endl
-              << " increase by id: "   << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_id-tp_replace).count() << std::endl
-              << " increase by iter: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_increase_iter-tp_increase_id).count() << std::endl;
-}
 
 
 // test the idtable performance on the following scenario:
 // 1) create N objects
 // 2) replace N/2 random objects
-// 3) increase the counter by 1 accesing by id
+// 3) increase the counter by 1 accessing by id
 // 4) increase the counter by one accessing by iteration
 
 int main(int argc, char *argv[]) {
+
+	// trc_init("idtable_trace.json",1000000);
 
     // std::string tmp;
     // std::cout << "DEBUG MODE: type something...\n";
@@ -196,18 +161,23 @@ int main(int argc, char *argv[]) {
 
     int N = argc>1 ? atoi(argv[1]) : 1000;
 
-    std::cout << "testing std::map with " << N << " elements" << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-    auto elapsed_microseconds = std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
-    auto elapsed_nanoseconds  = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count();
-    std::cout << "elapsed time: " << elapsed_milliseconds << " " << elapsed_microseconds << " " << elapsed_nanoseconds << " " << std::endl;
+    std::cout << "testing std::map with " << N << " elements" << std::endl << std::endl;
 
+    PerfResults map_res     = performance_std_map(N);
+    PerfResults idtable_res = performance_idtable(N);
 
-    performance_std_map(N);
-    performance_idtable(N);
+    printf("-------------------------------- Time Stats -----------------------------------\n");
+    printf("            %16s %16s %16s %16s\n", "creation", "replace", "access_by_id", "access_by_iter");
+    printf("std::map    %16lld %16lld %16lld %16lld\n", map_res.creation, map_res.replace, map_res.access_by_id, map_res.access_by_iter);
+    printf("IDTable     %16lld %16lld %16lld %16lld\n", idtable_res.creation, idtable_res.replace, idtable_res.access_by_id, idtable_res.access_by_iter);
+    printf("-------------------------------------------------------------------------------\n");
+    printf("ratio       %16.3f %16.3f %16.3f %16.3f\n", (float)map_res.creation/idtable_res.creation, 
+                                                        (float)map_res.replace/idtable_res.replace, 
+                                                        (float)map_res.access_by_id/idtable_res.access_by_id, 
+                                                        (float)map_res.access_by_iter/idtable_res.access_by_iter);
+
+    // trc_shutdown();
+
     return 0;
 }
 
