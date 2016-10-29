@@ -1,17 +1,7 @@
 #pragma once
+#include "foundation_types.h"
 
-#include <cstdint>
 #include <vector>
-
-/// \struct ID
-/// \brief opaque identifier used as a handle for referencing objects
-struct ID {
-    uint32_t index;
-    union {
-        uint32_t internal_id;
-        uint32_t next_free_idx;
-    };
-};
 
 
 /// \struct IDTable
@@ -99,3 +89,4 @@ template <typename T>
 bool IDTable<T>::has(ID id) const {
     return id.index<_ids.size() && _ids[id.index].internal_id == id.internal_id;
 }
+
