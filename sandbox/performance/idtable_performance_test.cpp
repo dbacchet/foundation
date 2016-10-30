@@ -1,6 +1,7 @@
 // example taken from https://github.com/hrydgard/minitrace
 #include "common/idtable.h"
 #include "common/static_idtable.h"
+#include "common/format.h"
 #include "tracing/tracing.h"
 
 #include <iostream>
@@ -220,15 +221,15 @@ int main(int argc, char *argv[]) {
     PerfResults map_res     = performance_std_map(N);
     PerfResults idtable_res = performance_idtable(N);
 
-    printf("\n-------------------------------- Time Stats -----------------------------------\n");
-    printf("            %16s %16s %16s %16s\n", "creation", "replace", "access_by_id", "access_by_iter");
-    printf("std::map    %16lld %16lld %16lld %16lld\n", map_res.creation, map_res.replace, map_res.access_by_id, map_res.access_by_iter);
-    printf("IDTable     %16lld %16lld %16lld %16lld\n", idtable_res.creation, idtable_res.replace, idtable_res.access_by_id, idtable_res.access_by_iter);
-    printf("-------------------------------------------------------------------------------\n");
-    printf("ratio       %16.3f %16.3f %16.3f %16.3f\n", (float)map_res.creation/idtable_res.creation,
-                                                        (float)map_res.replace/idtable_res.replace,
-                                                        (float)map_res.access_by_id/idtable_res.access_by_id,
-                                                        (float)map_res.access_by_iter/idtable_res.access_by_iter);
+    fmt::print("\n{:-^72}\n", " Time Stats ");
+    fmt::print("|{:>10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "","creation", "replace", "access_by_id", "access_by_iter");
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "std::map",map_res.creation, map_res.replace, map_res.access_by_id, map_res.access_by_iter);
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "IDTable",idtable_res.creation, idtable_res.replace, idtable_res.access_by_id, idtable_res.access_by_iter);
+    fmt::print("{:-^72}\n", "");
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "ratio",(float)map_res.creation/idtable_res.creation,
+                                                                (float)map_res.replace/idtable_res.replace,
+                                                                (float)map_res.access_by_id/idtable_res.access_by_id,
+                                                                (float)map_res.access_by_iter/idtable_res.access_by_iter);
 
     // ///////////// //
     // StaticIDTable //
@@ -236,18 +237,18 @@ int main(int argc, char *argv[]) {
 
     const unsigned int Nstatic = 90;
     std::cout << std::endl << "testing IDTable and StaticIDTable with " << Nstatic << " elements" << std::endl;
-    idtable_res        = performance_idtable(Nstatic);
+    PerfResults dyn_idtable_res    = performance_idtable(Nstatic);
     PerfResults static_idtable_res = performance_static_idtable(Nstatic);
 
-    printf("\n--------------------------- Time Stats (50 objects) ---------------------------\n");
-    printf("              %14s %16s %16s %16s\n", "creation", "replace", "access_by_id", "access_by_iter");
-    printf("IDTable       %14lld %16lld %16lld %16lld\n", idtable_res.creation, idtable_res.replace, idtable_res.access_by_id, idtable_res.access_by_iter);
-    printf("StaticIDTable %14lld %16lld %16lld %16lld\n", static_idtable_res.creation, static_idtable_res.replace, static_idtable_res.access_by_id, static_idtable_res.access_by_iter);
-    printf("-------------------------------------------------------------------------------\n");
-    printf("ratio         %14.3f %16.3f %16.3f %16.3f\n", (float)idtable_res.creation/static_idtable_res.creation,
-                                                          (float)idtable_res.replace/static_idtable_res.replace,
-                                                          (float)idtable_res.access_by_id/static_idtable_res.access_by_id,
-                                                          (float)idtable_res.access_by_iter/static_idtable_res.access_by_iter);
+    fmt::print("\n{:-^72}\n", " IDTable perf comparison ");
+    fmt::print("|{:>10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "","creation", "replace", "access_by_id", "access_by_iter");
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "Dynamic",dyn_idtable_res.creation, dyn_idtable_res.replace, dyn_idtable_res.access_by_id, dyn_idtable_res.access_by_iter);
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "Static",static_idtable_res.creation, static_idtable_res.replace, static_idtable_res.access_by_id, static_idtable_res.access_by_iter);
+    fmt::print("{:-^72}\n", "");
+    fmt::print("|{:<10}|{:>14}|{:>14}|{:>14}|{:>14}|\n", "ratio",(float)dyn_idtable_res.creation/static_idtable_res.creation,
+                                                                (float)dyn_idtable_res.replace/static_idtable_res.replace,
+                                                                (float)dyn_idtable_res.access_by_id/static_idtable_res.access_by_id,
+                                                                (float)dyn_idtable_res.access_by_iter/static_idtable_res.access_by_iter);
 
     return 0;
 }

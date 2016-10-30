@@ -10,6 +10,6 @@ env_local.AppendUnique(CPPDEFINES = [])
 # get list of files
 files = Glob('*.c*')
     
-# # build library
-# tracing_lib = env_local.StaticLibrary('tracing',files)
-# Return('tracing_lib')
+# build library
+common_lib = env_local.StaticLibrary('common',files)
+Return('common_lib')

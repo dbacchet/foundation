@@ -6,9 +6,11 @@ env_local = env.Clone()
 env_local.AppendUnique(CPPPATH = ['../..'
                                  ] )
 # lib path
-env_local.AppendUnique(LIBPATH = ['../../tracing'
+env_local.AppendUnique(LIBPATH = ['../../common',
+                                  '../../tracing',
                                  ])
 libs = []
+libs.append('common')
 libs.append('tracing')
 
 # build library
