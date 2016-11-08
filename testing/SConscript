@@ -8,12 +8,14 @@ env_local.AppendUnique(CPPPATH = ['#',
                                  ] )
 # lib path
 env_local.AppendUnique(LIBPATH = ['../3rdparty/googletest',
+                                  '../threadpool',
                                   '../tracing',
                                  ])
 files = Glob('*.cpp')
 
 libs = []
 libs.append('gtest')
+libs.append('threadpool')
 libs.append('tracing')
 
 # build library

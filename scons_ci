@@ -1,2 +1,2 @@
 #!/bin/sh
-find common sandbox testing tracing -name '*.[ch]' -o -name '*.cpp' | entr -c sh -c 'scons && build/darwin/testing/unit_tests'
+find common sandbox testing tracing threadpool -name '*.[ch]' -o -name '*.cpp' | entr -c sh -c 'scons && build/darwin/testing/unit_tests'

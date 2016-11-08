@@ -12,3 +12,5 @@ struct ID {
     };
 };
 
+/// size of a cache line, in bytes
+#define CACHE_LINE_SIZE 64

@@ -1,0 +1,10 @@
+# coding: utf-8
+Import('env')
+env_local = env.Clone()
+
+# include dirs
+env_local.AppendUnique(CPPPATH = ['..'
+                                 ] )
+
+# build library
+threadpool    = env_local.StaticLibrary('threadpool',   Glob('*.cpp'))
