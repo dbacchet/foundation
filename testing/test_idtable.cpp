@@ -8,6 +8,7 @@
 namespace {
 }
 
+
 TEST(IDTable, Creation) {
     IDTable<int64_t> idtable;
     ASSERT_TRUE(true);

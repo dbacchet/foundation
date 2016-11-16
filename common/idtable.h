@@ -7,7 +7,7 @@
 /// \struct IDTable
 /// \brief lookup table from IDs to objects
 /// \details the IDTable is optimized for lookup and access, and allows to store contiguously
-/// in memory the managed objects. Also reordering the objects is possble without any modifications 
+/// in memory the managed objects. Also reordering the objects is possble without any modifications
 /// in the exposed IDs.\n
 template <typename T>
 struct IDTable {
