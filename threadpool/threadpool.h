@@ -4,12 +4,14 @@
 #include "common/idtable.h"
 
 #include <cstdint>
+#include <cstring>
 #include <atomic>
 // #include <list>
 #include <set>
 #include <deque>
 #include <vector>
 #include <thread>
+#include <condition_variable>
 #include <mutex>
 
 struct Job;

@@ -39,7 +39,7 @@ PerfResults performance_std_map(unsigned int N) {
     auto tp_creation_start = std::chrono::high_resolution_clock::now();
     for (uint32_t i=0; i<N; i++) {
         auto id = uuid++;
-        mymap[id] = TestData { .counter=i, .value=0.0, .timestamp=10010101 };
+        mymap[id] = TestData { .counter=i, .value=0.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=10010101 };
         ids.push_back(id);
     }
     auto tp_creation_end = std::chrono::high_resolution_clock::now();
@@ -58,7 +58,7 @@ PerfResults performance_std_map(unsigned int N) {
         // add
         for (auto c: candidates) {
             auto id = uuid++;
-            mymap[id] = TestData { .counter=100, .value=1.0, .timestamp=20020202 };
+            mymap[id] = TestData { .counter=100, .value=1.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=20020202 };
             ids.push_back(id);
         }
     }
@@ -95,7 +95,7 @@ PerfResults performance_idtable(unsigned int N) {
     // creation
     auto tp_creation_start = std::chrono::high_resolution_clock::now();
     for (uint32_t i=0; i<N; i++) {
-        auto id = mytable.add(TestData { .counter=i, .value=0.0, .timestamp=10010101 });
+        auto id = mytable.add(TestData { .counter=i, .value=0.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=10010101 });
         ids.push_back(id);
     }
     auto tp_creation_end = std::chrono::high_resolution_clock::now();
@@ -113,7 +113,7 @@ PerfResults performance_idtable(unsigned int N) {
         }
         // add
         for (auto c: candidates) {
-            auto id = mytable.add(TestData { .counter=100, .value=1.0, .timestamp=20020202 });
+            auto id = mytable.add(TestData { .counter=100, .value=1.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=20020202 });
             ids.push_back(id);
         }
     }
@@ -150,7 +150,7 @@ PerfResults performance_static_idtable(unsigned int N) {
     // creation
     auto tp_creation_start = std::chrono::high_resolution_clock::now();
     for (uint32_t i=0; i<N; i++) {
-        auto id = mytable.add(TestData { .counter=i, .value=0.0, .timestamp=10010101 });
+        auto id = mytable.add(TestData { .counter=i, .value=0.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=10010101 });
         ids.push_back(id);
     }
     auto tp_creation_end = std::chrono::high_resolution_clock::now();
@@ -168,7 +168,7 @@ PerfResults performance_static_idtable(unsigned int N) {
         }
         // add
         for (auto c: candidates) {
-            auto id = mytable.add(TestData { .counter=100, .value=1.0, .timestamp=20020202 });
+            auto id = mytable.add(TestData { .counter=100, .value=1.0, .data={0,0,0,0,0,0,0,0,0,0}, .timestamp=20020202 });
             ids.push_back(id);
         }
     }

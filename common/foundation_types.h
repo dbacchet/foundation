@@ -11,8 +11,8 @@ struct ID {
         uint32_t next_free_idx;
     };
 
-    ID() {}
-    ID(uint32_t idx,uint32_t internal_idx)
+    // ID() {}
+    ID(uint32_t idx=UINT32_MAX,uint32_t internal_idx=UINT32_MAX)
     : index(idx), internal_id(internal_idx) {}
 };
 

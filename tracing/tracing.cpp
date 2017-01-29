@@ -9,6 +9,7 @@
 #include <thread>
 #include <atomic>
 #include <csignal>
+#include <cstring>
 
 // local data
 namespace {

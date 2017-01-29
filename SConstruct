@@ -15,6 +15,10 @@ tools = ['default']
 
 # create the main environment
 env = Environment( tools = tools )
+# env = Environment( CC='clang',
+#                    CXX='clang++',
+#                    ENV = os.environ,
+#                    tools = tools )
 
 env.Append(BASEPATH=basepath)
 env.Append(ENV = {'BASEPATH' : str(Dir('#').abspath)})
@@ -33,6 +37,7 @@ env.AppendUnique( CCFLAGS = ['-g',
                              '-std=c++11',
                              '-Werror'])
 
+# print env.Dump()
 # build sources
 SConscript( 'SConscript',
             variant_dir = builddir,

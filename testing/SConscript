@@ -17,6 +17,7 @@ libs = []
 libs.append('gtest')
 libs.append('threadpool')
 libs.append('tracing')
+libs.append('pthread')
 
 # build library
 unit_tests = env_local.Program('unit_tests', files, LIBS=libs)

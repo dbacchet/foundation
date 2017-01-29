@@ -10,6 +10,7 @@ env_local.AppendUnique(LIBPATH = ['../../tracing'
                                  ])
 libs = []
 libs.append('tracing')
+libs.append('pthread')
 
 # build library
 tracing_test    = env_local.Program('tracing_test',   Glob('tracing_test.cpp'),   LIBS=libs)
