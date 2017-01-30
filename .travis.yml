@@ -16,3 +16,10 @@ script:
 #     packages:
 #     - gcc-5
 #     - g++-5
+notifications:
+  email:
+    recipients:
+      - davide.bacchet@nio.com
+      - davide.bacchet@gmail.com
+    on_success: change # default: change
+    on_failure: always # default: always
