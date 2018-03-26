@@ -1,39 +1,68 @@
 #pragma once
-// /////////////////////////////////////////////////////////////////////// //
-// Copyright (c) 2013, Davide Bacchet (davide.bacchet@gmail.com)           //
-// All rights reserved.                                                    //
-//                                                                         //
-// The software is released under the Creative Commons Attribution         //
-// NonCommercial (CC BY-NC) license. The full license text is available    //
-// at http://creativecommons.org/licenses/by-nc/3.0/legalcode              //
-//                                                                         //
-// You are free to distribute and adapt the work under the conditions:     //
-// * Redistributions of source code must retain the above copyright notice //
-// * You must attribute the work in the manner specified by the author     //
-// * You may not use this work for commercial purposes.                    //
-//                                                                         //
-// Commercial Usage:                                                       //
-// To use this software as part of a commercial product, you must          //
-// obtain a written agreement from the author.                             //
-// /////////////////////////////////////////////////////////////////////// //
 
-// logging 
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
 
-#ifdef __cplusplus
-extern "C" {
+// default: log level to info
+#ifndef LOG_LEVEL
+#define LOG_LEVEL 3
 #endif
 
-// log calls
-void logTrace(const char* logline, ...);
-void logDebug(const char* logline, ...);
-void logInfo(const char* logline, ...);
-void logMessage(const char* logline, ...);
-void logWarning(const char* logline, ...);
-void logError(const char* logline, ...);
-    
-
-
-
-#ifdef __cplusplus
-}
+// defaulf: use only the file name, not the full path
+#ifndef LOG_FULL_FILENAME
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#else
+#define __FILENAME__ __FILE__
 #endif
+
+#ifdef LOG_NOCOLOR
+#define LOG_COLOR_RED
+#define LOG_COLOR_GREEN
+#define LOG_COLOR_YELLOW
+#define LOG_COLOR_BLUE
+#define LOG_COLOR_MAGENTA
+#define LOG_COLOR_CYAN
+#define LOG_COLOR_GRAY
+#define LOG_COLOR_DEFAULT_FG
+#define LOG_COLOR_RESET
+#else
+#define LOG_COLOR_RED        "\33[31m"
+#define LOG_COLOR_GREEN      "\33[32m"
+#define LOG_COLOR_YELLOW     "\33[33m"
+#define LOG_COLOR_BLUE       "\33[34m"
+#define LOG_COLOR_MAGENTA    "\33[35m"
+#define LOG_COLOR_CYAN       "\33[36m"
+#define LOG_COLOR_GRAY       "\33[90m"
+#define LOG_COLOR_DEFAULT_FG "\33[39m"
+#define LOG_COLOR_RESET      "\33[0m"
+#endif
+
+/* safe readable version of errno */
+#define clean_errno() (errno == 0 ? "None" : strerror(errno))
+
+#define log_debug(MSG, ...)   printf(LOG_COLOR_MAGENTA "[DEBUG] " LOG_COLOR_RESET MSG "  " LOG_COLOR_GRAY " at %s (%s:%d) " LOG_COLOR_DEFAULT_FG "\n", ##__VA_ARGS__, __func__, __FILE__, __LINE__)
+#define log_info(MSG, ...)    printf(LOG_COLOR_GREEN   "[INFO ] " LOG_COLOR_RESET MSG "  " LOG_COLOR_GRAY " at %s (%s:%d) " LOG_COLOR_DEFAULT_FG "\n", ##__VA_ARGS__, __func__, __FILENAME__, __LINE__)
+#define log_warning(MSG, ...) printf(LOG_COLOR_YELLOW  "[WARN ] " LOG_COLOR_RESET MSG "  " LOG_COLOR_GRAY " at %s (%s:%d) " LOG_COLOR_BLUE "errno: %s" LOG_COLOR_DEFAULT_FG "\n", ##__VA_ARGS__, __func__, __FILE__, __LINE__, clean_errno())
+#define log_error(MSG, ...)   printf(LOG_COLOR_RED     "[ERROR] " LOG_COLOR_RESET MSG "  " LOG_COLOR_GRAY " at %s (%s:%d) " LOG_COLOR_BLUE "errno: %s" LOG_COLOR_DEFAULT_FG "\n", ##__VA_ARGS__, __func__, __FILE__, __LINE__, clean_errno())
+
+#if !defined(_DEBUG) && LOG_LEVEL < 4
+#undef log_debug
+#define log_debug(MSG, ...)
+#endif
+
+#if LOG_LEVEL < 3
+#undef log_info
+#define log_info(MSG, ...)
+#endif
+
+#if LOG_LEVEL < 2
+#undef log_warning
+#define log_warning(MSG, ...)
+#endif
+
+#if LOG_LEVEL < 1
+#undef log_error
+#define log_error(MSG, ...)
+#endif
+

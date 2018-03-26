@@ -1,0 +1,63 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+import sys
+# associate .m files to C compiler
+from waflib import TaskGen
+@TaskGen.extension('.m')
+def m_hook(self, node):
+    # Alias .m files to be compiled the same as .c files for cocoa
+    return self.create_compiled_task('c', node)
+
+def configure(cfg):
+    pass
+
+def build(bld):
+    files = ['src/context.c',
+             'src/init.c',
+             'src/input.c',
+             'src/monitor.c',
+             'src/vulkan.c',
+             'src/window.c',
+             'deps/glad.c',
+            ]
+    include_dirs = [ 'include',
+                     'src',
+                     'deps']
+    defines = []
+    cflags = []
+
+    # platform specific statements
+    if sys.platform=='darwin':
+        files.extend(['src/cocoa_init.m',
+                      'src/cocoa_joystick.m',
+                      'src/cocoa_monitor.m',
+                      'src/cocoa_window.m',
+                      'src/cocoa_time.c',
+                      'src/posix_tls.c',
+                      'src/nsgl_context.m'])
+        defines.extend(['_GLFW_COCOA','_GLFW_USE_MENUBAR'])
+        cflags.extend(['-Wno-deprecated-declarations'])
+    if sys.platform.startswith('linux'):
+        files.extend(['src/x11_init.c',
+                      'src/x11_monitor.c',
+                      'src/x11_window.c',
+                      'src/xkb_unicode.c',
+                      'src/linux_joystick.c',
+                      'src/posix_time.c',
+                      'src/posix_tls.c',
+                      'src/glx_context.c',
+                      'src/egl_context.c']) 
+        defines.extend(['_GLFW_X11'])
+
+    bld.stlib( target = 'glfw',
+               name='3rdparty_glfw',
+               source = files,
+               includes = include_dirs, 
+               defines = defines,
+               cflags = cflags,
+               export_includes = ['include','deps'],
+               use = ['OSDEPS']
+              )
+
+

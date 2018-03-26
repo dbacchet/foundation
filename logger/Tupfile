@@ -1,0 +1,8 @@
+include_rules
+
+INCLUDES += -I..
+
+: foreach test.c |> !cc |>
+# need to find a way to pass the root folder directly to the program macro
+: *.o |> !program |> app
+

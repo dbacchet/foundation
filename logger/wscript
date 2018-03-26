@@ -1,0 +1,6 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    bld.program(target = 'sample_logger',
+                source = 'test.c')

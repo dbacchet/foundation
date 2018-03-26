@@ -22,3 +22,9 @@ build
 *.swp
 # ctags
 tags
+# build system
+bf_install
+.waf-*
+.lock-waf*
+.wafcache_package
+.tup
