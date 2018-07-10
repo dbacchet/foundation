@@ -78,6 +78,7 @@ def build(bld):
     bld.env.BASEDIR = basepath
     # go into subdirs
     bld.recurse('3rdparty')
+    bld.recurse('containers')
     bld.recurse('logger')
     bld.recurse('src')
 

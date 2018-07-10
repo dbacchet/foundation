@@ -8,4 +8,10 @@ def build(bld):
                           '3rdparty_sokol'
                          ]
                )
+    bld.program(target = 'sample_sokol_offscreen',
+                source = 'offscreen-glfw.c',
+                use    = ['3rdparty_glfw',
+                          '3rdparty_sokol'
+                         ]
+               )
 

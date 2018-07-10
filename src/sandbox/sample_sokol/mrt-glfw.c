@@ -348,6 +348,12 @@ int main() {
             sg_apply_draw_state(&dbg_ds);
             sg_draw(0, 4, 1);
         }
+        for (int i = 3; i < 4; i++) {
+            sg_apply_viewport(i*100, 0, 100, 100, false);
+            dbg_ds.fs_images[0] = offscreen_pass_desc.depth_stencil_attachment.image;//color_attachments[i].image;
+            sg_apply_draw_state(&dbg_ds);
+            sg_draw(0, 4, 1);
+        }
         sg_end_pass();
         sg_commit();
         glfwSwapBuffers(w);
